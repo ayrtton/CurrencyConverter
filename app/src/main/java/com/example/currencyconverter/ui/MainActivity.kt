@@ -2,14 +2,10 @@ package com.example.currencyconverter.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.ArrayAdapter
 import androidx.core.widget.doAfterTextChanged
-import androidx.lifecycle.ViewModel
-import com.example.currencyconverter.R
-import com.example.currencyconverter.core.extensions.createDialog
-import com.example.currencyconverter.core.extensions.createProgressDialog
-import com.example.currencyconverter.data.model.Coin
+import com.example.currencyconverter.core.extensions.*
+import com.example.currencyconverter.data.model.Currency
 import com.example.currencyconverter.databinding.ActivityMainBinding
 import com.example.currencyconverter.presentation.di.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -24,9 +20,34 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         bindAdapters()
-        bindingListeners()
+        bindListeners()
+        bindObserve()
+    }
 
-        viewModel.getExchangeValue("USD-BRL")
+    private fun bindAdapters() {
+        val list = Currency.values()
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, list)
+
+        binding.tvFrom.setAdapter(adapter)
+        binding.tvTo.setAdapter(adapter)
+        binding.tvFrom.setText(Currency.BRL.name, false)
+        binding.tvTo.setText(Currency.USD.name, false)
+    }
+
+    private fun bindListeners() {
+        binding.tilValue.editText?.doAfterTextChanged {
+            binding.btnConvert.isEnabled = it != null && it.toString().isNotEmpty()
+        }
+
+        binding.btnConvert.setOnClickListener {
+            it.hideSoftKeyboard()
+
+            val search = "${binding.tilFrom.text}-${binding.tilTo.text}"
+            viewModel.getExchangeValue(search)
+        }
+    }
+
+    private fun bindObserve() {
         viewModel.state.observe(this) {
             when(it) {
                 MainViewModel.State.Loading -> dialog.show()
@@ -36,31 +57,18 @@ class MainActivity : AppCompatActivity() {
                         setMessage(it.error.message)
                     }.show()
                 }
-                is MainViewModel.State.Success -> {
-                    dialog.dismiss()
-                    Log.e("TAG", "onCreate: ${it.value}")
-                }
+                is MainViewModel.State.Success -> success(it)
             }
         }
     }
 
-    private fun bindAdapters() {
-        val list = Coin.values()
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, list)
+    private fun success(it: MainViewModel.State.Success) {
+        dialog.dismiss()
 
-        binding.tvFrom.setAdapter(adapter)
-        binding.tvFrom.setText(Coin.BRL.name, false)
-        binding.tvTo.setAdapter(adapter)
-        binding.tvTo.setText(Coin.USD.name, false)
-    }
+        val selectedCurrency = binding.tilTo.text
+        val currency = Currency.values().find { it.name == selectedCurrency } ?: Currency.BRL
+        val result = it.exchange.bid * binding.tilValue.text.toDouble()
 
-    private fun bindingListeners() {
-        binding.tilValue.editText?.doAfterTextChanged {
-            binding.btnConvert.isEnabled = it != null && it.toString().isNotEmpty()
-        }
-
-        binding.btnConvert.setOnClickListener {
-
-        }
+        binding.tvResult.text = result.formatCurrency(currency.locale)
     }
 }

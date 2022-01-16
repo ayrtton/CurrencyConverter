@@ -4,7 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Projects/Kotlin/CurrencyConverter/app/src/main/res/font/fonts.xml" value="0.21944444444444444" />
+        <entry key="..\:/Projects/Kotlin/CurrencyConverter/app/src/main/res/layout/activity_history.xml" value="0.16576086956521738" />
         <entry key="..\:/Projects/Kotlin/CurrencyConverter/app/src/main/res/layout/activity_main.xml" value="0.2" />
+        <entry key="..\:/Projects/Kotlin/CurrencyConverter/app/src/main/res/layout/item_history.xml" value="0.22" />
+        <entry key="..\:/Projects/Kotlin/CurrencyConverter/app/src/main/res/menu/main_menu.xml" value="0.203125" />
       </map>
     </option>
   </component>

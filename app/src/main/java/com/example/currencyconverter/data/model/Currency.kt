@@ -9,5 +9,9 @@ enum class Currency(val locale: Locale) {
     GBP(Locale.UK),
     ARS(Locale("es", "AR")),
     JPY(Locale.JAPAN),
-    CNY(Locale.CHINA)
+    CNY(Locale.CHINA);
+
+    companion object {
+        fun getByName(name: String) = values().find { it.name == name } ?: BRL
+    }
 }

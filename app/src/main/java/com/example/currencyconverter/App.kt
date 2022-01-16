@@ -3,7 +3,7 @@ package com.example.currencyconverter
 import android.app.Application
 import com.example.currencyconverter.data.di.DataModules
 import com.example.currencyconverter.domain.di.DomainModule
-import com.example.currencyconverter.presentation.PresentationModule
+import com.example.currencyconverter.presentation.di.PresentationModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
